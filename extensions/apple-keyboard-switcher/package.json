@@ -1,0 +1,29 @@
+{
+  "$schema": "https://www.raycast.com/schemas/extension.json",
+  "name": "apple-keyboard-switcher",
+  "title": "Apple Keyboard Switcher",
+  "description": "Quickly disconnect your Apple Magic Keyboard so it switches to another Mac",
+  "icon": "icon.png",
+  "author": "yourusername",
+  "license": "MIT",
+  "commands": [
+    {
+      "name": "disconnect-keyboard",
+      "title": "Disconnect Apple Keyboard",
+      "description": "Disconnect Magic Keyboard so it connects to your other Mac",
+      "mode": "view"
+    }
+  ],
+  "dependencies": {
+    "@raycast/api": "^1.79.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.10",
+    "typescript": "^5.4.5"
+  },
+  "scripts": {
+    "build": "ray build -e dist",
+    "dev": "ray develop",
+    "lint": "ray lint"
+  }
+}
