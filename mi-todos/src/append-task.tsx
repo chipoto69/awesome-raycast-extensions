@@ -9,21 +9,15 @@ import {
 } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { useState } from "react";
-import {
-  expandHome,
-  resolvePath,
-  appendToInbox,
-  fileExists,
-  listProjectFiles,
-} from "./util/storage";
+import { expandHome, resolvePath, appendToInbox, fileExists, listProjectFiles } from "./util/storage";
 import { appendToProject } from "./util/routing";
 
 interface Preferences {
   mitodosDir: string;
 }
 
-export default function Command(props: { arguments: { text?: string } }) {
-  const [taskText, setTaskText] = useState(props.arguments.text || "");
+export default function Command(props: { arguments?: { text?: string } }) {
+  const [taskText, setTaskText] = useState(props.arguments?.text ?? "");
   const [project, setProject] = useState("inbox");
   const prefs = getPreferenceValues<Preferences>();
   const mitodosDir = resolvePath(expandHome(prefs.mitodosDir));
