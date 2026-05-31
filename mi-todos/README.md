@@ -8,9 +8,9 @@ Capture tasks instantly from anywhere in Raycast, route them into projects, and 
 
 | Command | Description |
 |---|---|
-| **Add Task** | Quick-capture a task. Pick a project from the dropdown or drop it in the inbox. Supports ripgrep-powered search across all tasks. |
+| **Add Task** | Quick-capture a task. Pick a project from the dropdown or drop it in the inbox. |
 | **Create Project** | Scaffold a new `project-name.md` with inbox, priority lanes, and notes sections. |
-| **Search MiToDos** | Search across all MiToDos files with ripgrep (fast, respects `.gitignore`). Falls back to grep if ripgrep is not installed. QMD semantic search augments results when available. |
+| **Search MiToDos** | Search across all MiToDos files with ripgrep (fast, respects `.gitignore`). Falls back to grep. QMD semantic search augments results when available. |
 
 ## File Layout
 
@@ -26,15 +26,25 @@ Files are named by purpose. No prefixes — the directory already scopes the nam
 
 ## Setup
 
-1. **Install from Raycast Store** (no configuration needed for basic use).
-2. **Set preferences** (optional):
-   - `MiToDos Directory`: where your `.md` files live (default: `~/MiToDos/`)
-   - `Wiki Vault Path`: your Obsidian vault for cross-search (default: `~/wiki/`)
-3. **Install ripgrep** (optional, but recommended for fast search):
-   ```bash
-   brew install ripgrep
-   ```
-4. **Install QMD** (optional, for semantic wiki search alongside MiToDos).
+### Install (manual)
+
+1. Open Raycast → **Import Extension**
+2. Select `~/awesome-raycast-extensions/mi-todos/`
+3. The three commands appear in your root search
+
+### Preferences (optional)
+
+| Preference | Default | What it does |
+|---|---|---|
+| `MiToDos Directory` | `~/MiToDos/` | Where your `.md` files live |
+| `Wiki Vault Path` | `~/wiki/` | Your Obsidian vault for optional cross-search |
+
+### Optional tools
+
+```bash
+brew install ripgrep          # fast search (recommended)
+# QMD for semantic wiki search alongside MiToDos
+```
 
 ## Task Routing
 
@@ -46,14 +56,14 @@ When you run **Add Task**, a dropdown lets you choose where the task lands:
 | 📁 content-os | `~/MiToDos/content-os.md` |
 | 📁 hermes | `~/MiToDos/hermes.md` |
 
-Selecting a project that doesn't have a file yet auto-creates it with the template (inbox section, priority lanes, notes).
+Selecting a project that doesn't have a file yet auto-creates it with the full template.
 
 ## Why Markdown?
 
 - **Portable**: Open with any text editor. View in Obsidian. Grep from the terminal.
 - **Versionable**: Drop `~/MiToDos/` into any git repo. Track task history.
 - **Agent-friendly**: LLMs can read and write the format natively — no API needed.
-- **Fast**: Searching ~/MiToDos/ with ripgrep takes milliseconds even with hundreds of files.
+- **Fast**: ripgrep searches hundreds of files in milliseconds.
 
 ## Development
 
@@ -63,6 +73,10 @@ cd awesome-raycast-extensions/mi-todos
 npm install
 npm run dev
 ```
+
+## Store
+
+Published under `chipoto69` organization on the Raycast Store.
 
 ## License
 
