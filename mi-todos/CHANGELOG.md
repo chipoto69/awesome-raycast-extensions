@@ -1,7 +1,9 @@
 # MiToDos Changelog
 
-## [0.1.0] - {PR_MERGE_DATE}
+## [Initial Release] - {PR_MERGE_DATE}
 
-- Initial release: Add Task, Create Project, Search MiToDos
-- Wiki-native storage at `~/wiki/_meta/mitodos.md`
-- QMD semantic search with grep fallback
+- **Add Task**: Quick-capture tasks with project routing (inbox or any project file).
+- **Create Project**: Scaffold new project files from Raycast.
+- **Search MiToDos**: ripgrep-powered search across all task files, with QMD wiki fallback.
+- **Markdown-native**: Tasks live in `~/MiToDos/` — plain `.md` files, version-controllable, AI-readable.
+- **No database, no API**: Just files on disk.
