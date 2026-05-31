@@ -9,7 +9,13 @@ import {
 } from "@raycast/api";
 import { usePromise } from "@raycast/utils";
 import { useState } from "react";
-import { expandHome, resolvePath, appendToInbox, fileExists, listProjectFiles } from "./util/storage";
+import {
+  expandHome,
+  resolvePath,
+  appendToInbox,
+  fileExists,
+  listProjectFiles,
+} from "./util/storage";
 import { appendToProject } from "./util/routing";
 
 interface Preferences {
@@ -58,10 +64,7 @@ export default function Command(props: { arguments: { text?: string } }) {
       })),
   ];
 
-  const targetPath =
-    project === "inbox"
-      ? `${mitodosDir}/inbox.md`
-      : `${mitodosDir}/${project}.md`;
+  const targetPath = project === "inbox" ? `${mitodosDir}/inbox.md` : `${mitodosDir}/${project}.md`;
 
   return (
     <Form

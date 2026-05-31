@@ -50,17 +50,14 @@ function SearchResults({ query }: { query: string }) {
   const wikiPath = resolvePath(expandHome(prefs.wikiPath));
   const { push } = useNavigation();
 
-  const { data, isLoading } = usePromise(
-    async () => {
-      if (!query.trim()) return { todos: [] as QmdResult[], wiki: [] as QmdResult[] };
+  const { data, isLoading } = usePromise(async () => {
+    if (!query.trim()) return { todos: [] as QmdResult[], wiki: [] as QmdResult[] };
 
-      const todos = searchMitodos(mitodosDir, query);
-      const wiki = searchWikiWithQmd(wikiPath, query, 10);
+    const todos = searchMitodos(mitodosDir, query);
+    const wiki = searchWikiWithQmd(wikiPath, query, 10);
 
-      return { todos, wiki };
-    },
-    [query],
-  );
+    return { todos, wiki };
+  }, [query]);
 
   if (!query.trim()) {
     return (
@@ -81,7 +78,13 @@ function SearchResults({ query }: { query: string }) {
   const total = todos.length + wiki.length;
 
   if (total === 0) {
-    return <List.EmptyView icon={Icon.XMarkCircle} title="No results" description={`Nothing matched "${query}"`} />;
+    return (
+      <List.EmptyView
+        icon={Icon.XMarkCircle}
+        title="No results"
+        description={`Nothing matched "${query}"`}
+      />
+    );
   }
 
   return (
