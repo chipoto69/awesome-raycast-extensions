@@ -3,14 +3,14 @@ import path from "path";
 import os from "os";
 
 /**
- * Lists all MiToDos project files in ~/wiki/mitodos/
+ * Lists all MiToDos files in ~/MiToDos/
  */
 export default async function () {
-  const mitodosDir = path.join(os.homedir(), "wiki", "mitodos");
+  const mitodosDir = path.join(os.homedir(), "MiToDos");
 
   try {
     if (!fs.existsSync(mitodosDir)) {
-      return "MiToDos directory not found";
+      return "MiToDos directory not found at ~/MiToDos/";
     }
 
     const files = fs
@@ -18,7 +18,7 @@ export default async function () {
       .filter((f) => f.endsWith(".md"))
       .map((f) => f.replace(".md", ""));
 
-    return files.length > 0 ? files : "No MiToDos files found";
+    return files.length > 0 ? files : "No MiToDos files found — use mi add or mi project to get started";
   } catch (error) {
     return `Error listing MiToDos files: ${String(error)}`;
   }

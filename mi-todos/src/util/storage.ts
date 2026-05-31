@@ -2,6 +2,12 @@ import fs from "fs";
 import path from "path";
 import os from "os";
 
+// ─── MiToDos — home is ~/MiToDos/ ───
+//
+// ~/MiToDos/
+//   inbox.md              ← default quick-capture target
+//   <project>.md          ← project-scoped files
+
 export function expandHome(filepath: string): string {
   if (filepath.startsWith("~")) {
     return path.join(os.homedir(), filepath.slice(1));
@@ -44,14 +50,6 @@ export function todayDate(): string {
   return new Date().toISOString().slice(0, 10);
 }
 
-// ─── MiToDos directory structure ───
-// ~/wiki/mitodos/
-//   inbox.md              ← default quick-capture target
-//   <project>.md          ← project files
-//
-// Files are named by purpose. No mitodos- prefix because
-// the directory already scopes them.
-
 const INBOX_HEADING = "## 📋 Inbox";
 const TASKS_HEADING = "## 📁 Tasks";
 
@@ -80,10 +78,6 @@ ${TASKS_HEADING}
 ## 📊 Notes
 `;
 
-/**
- * Append a task to inbox.md in the mitodos directory.
- * Creates inbox.md with template if it doesn't exist.
- */
 export function appendToInbox(mitodosDir: string, task: string): string {
   const inboxPath = path.join(resolvePath(mitodosDir), "inbox.md");
 
@@ -112,9 +106,6 @@ export function appendToInbox(mitodosDir: string, task: string): string {
   return task;
 }
 
-/**
- * Create a project file: ~/wiki/mitodos/<name>.md
- */
 export function createProjectFile(mitodosDir: string, projectName: string): string {
   const dir = resolvePath(mitodosDir);
   ensureDir(dir);
@@ -123,7 +114,7 @@ export function createProjectFile(mitodosDir: string, projectName: string): stri
   const filepath = path.join(dir, filename);
 
   if (fs.existsSync(filepath)) {
-    throw new Error(`Project file already exists: ${filename}`);
+    throw new Error(`Already exists: ${filename}`);
   }
 
   const content = PROJECT_TEMPLATE.replace("{{name}}", projectName).replace("{{date}}", todayDate());
@@ -132,9 +123,6 @@ export function createProjectFile(mitodosDir: string, projectName: string): stri
   return filepath;
 }
 
-/**
- * List all .md files in the mitodos directory.
- */
 export function listProjectFiles(mitodosDir: string): string[] {
   const dir = resolvePath(mitodosDir);
   if (!fs.existsSync(dir)) return [];

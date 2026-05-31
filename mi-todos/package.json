@@ -65,9 +65,9 @@
     {
       "name": "mitodosDir",
       "title": "MiToDos Directory",
-      "description": "Directory for MiToDos markdown files",
+      "description": "Directory for MiToDos markdown files (default: ~/MiToDos/)",
       "type": "textfield",
-      "default": "~/wiki/mitodos",
+      "default": "~/MiToDos",
       "required": true
     },
     {
