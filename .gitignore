@@ -34,3 +34,10 @@ logs
 # Temporary files
 tmp/
 temp/
+
+# Ignore other extensions for clean publish
+/AGENTS.md
+/are-na/
+/contexts/
+/extensions/forked-extensions/
+/hermes-agent/
