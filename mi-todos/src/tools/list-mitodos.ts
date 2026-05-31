@@ -3,19 +3,19 @@ import path from "path";
 import os from "os";
 
 /**
- * Lists all available MiToDos files in the wiki _meta directory.
+ * Lists all MiToDos project files in ~/wiki/mitodos/
  */
 export default async function () {
-  const wikiPath = path.join(os.homedir(), "wiki", "_meta");
+  const mitodosDir = path.join(os.homedir(), "wiki", "mitodos");
 
   try {
-    if (!fs.existsSync(wikiPath)) {
-      return "Wiki _meta directory not found";
+    if (!fs.existsSync(mitodosDir)) {
+      return "MiToDos directory not found";
     }
 
     const files = fs
-      .readdirSync(wikiPath)
-      .filter((f) => f.startsWith("mitodos") && f.endsWith(".md"))
+      .readdirSync(mitodosDir)
+      .filter((f) => f.endsWith(".md"))
       .map((f) => f.replace(".md", ""));
 
     return files.length > 0 ? files : "No MiToDos files found";

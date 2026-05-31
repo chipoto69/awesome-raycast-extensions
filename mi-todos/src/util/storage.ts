@@ -40,17 +40,58 @@ export function appendFile(filepath: string, content: string): void {
   fs.appendFileSync(resolved, content, "utf-8");
 }
 
+export function todayDate(): string {
+  return new Date().toISOString().slice(0, 10);
+}
+
+// ─── MiToDos directory structure ───
+// ~/wiki/mitodos/
+//   inbox.md              ← default quick-capture target
+//   <project>.md          ← project files
+//
+// Files are named by purpose. No mitodos- prefix because
+// the directory already scopes them.
+
 const INBOX_HEADING = "## 📋 Inbox";
+const TASKS_HEADING = "## 📁 Tasks";
 
-export function appendToInbox(filepath: string, task: string): string {
-  const resolved = resolvePath(filepath);
+const INBOX_TEMPLATE = `# MiToDos — Inbox
 
-  if (!fs.existsSync(resolved)) {
-    const header = `# MiToDos — ${todayDate()}\n\n${INBOX_HEADING}\n`;
-    writeFile(filepath, header);
+> Quick capture. Sort later.
+
+${INBOX_HEADING}
+
+`;
+
+const PROJECT_TEMPLATE = `# MiToDos — {{name}}
+
+> Created {{date}}
+
+${INBOX_HEADING}
+
+${TASKS_HEADING}
+
+### 🔴 Priority
+
+### 🟡 Medium
+
+### 🟢 Low
+
+## 📊 Notes
+`;
+
+/**
+ * Append a task to inbox.md in the mitodos directory.
+ * Creates inbox.md with template if it doesn't exist.
+ */
+export function appendToInbox(mitodosDir: string, task: string): string {
+  const inboxPath = path.join(resolvePath(mitodosDir), "inbox.md");
+
+  if (!fs.existsSync(inboxPath)) {
+    writeFile(inboxPath, INBOX_TEMPLATE);
   }
 
-  const content = readFile(filepath);
+  const content = readFile(inboxPath);
   const taskLine = `- [ ] ${task}\n`;
 
   if (content.includes(INBOX_HEADING)) {
@@ -63,41 +104,23 @@ export function appendToInbox(filepath: string, task: string): string {
     }
 
     lines.splice(insertIndex, 0, taskLine.trimEnd());
-    writeFile(filepath, lines.join("\n"));
+    writeFile(inboxPath, lines.join("\n"));
   } else {
-    appendFile(filepath, `\n${INBOX_HEADING}\n${taskLine}`);
+    appendFile(inboxPath, `\n${INBOX_HEADING}\n${taskLine}`);
   }
 
   return task;
 }
 
-export function todayDate(): string {
-  return new Date().toISOString().slice(0, 10);
-}
+/**
+ * Create a project file: ~/wiki/mitodos/<name>.md
+ */
+export function createProjectFile(mitodosDir: string, projectName: string): string {
+  const dir = resolvePath(mitodosDir);
+  ensureDir(dir);
 
-const PROJECT_TEMPLATE = `# MiToDos — {{name}}
-
-> Created {{date}}
-
-## 📋 Inbox
-
-## 📁 Tasks
-
-### 🔴 Priority
-
-### 🟡 Medium
-
-### 🟢 Low
-
-## 📊 Notes
-`;
-
-export function createProjectFile(wikiPath: string, projectName: string): string {
-  const metaDir = resolvePath(path.join(wikiPath, "_meta"));
-  ensureDir(metaDir);
-
-  const filename = `mitodos-${projectName.toLowerCase().replace(/\s+/g, "-")}.md`;
-  const filepath = path.join(metaDir, filename);
+  const filename = `${projectName.toLowerCase().replace(/\s+/g, "-")}.md`;
+  const filepath = path.join(dir, filename);
 
   if (fs.existsSync(filepath)) {
     throw new Error(`Project file already exists: ${filename}`);
@@ -107,4 +130,17 @@ export function createProjectFile(wikiPath: string, projectName: string): string
   writeFile(filepath, content);
 
   return filepath;
+}
+
+/**
+ * List all .md files in the mitodos directory.
+ */
+export function listProjectFiles(mitodosDir: string): string[] {
+  const dir = resolvePath(mitodosDir);
+  if (!fs.existsSync(dir)) return [];
+
+  return fs
+    .readdirSync(dir)
+    .filter((f) => f.endsWith(".md"))
+    .map((f) => f.replace(".md", ""));
 }

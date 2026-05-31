@@ -11,13 +11,14 @@ import { useState } from "react";
 import { expandHome, resolvePath, appendToInbox, fileExists } from "./util/storage";
 
 interface Preferences {
-  mitodosPath: string;
+  mitodosDir: string;
 }
 
 export default function Command(props: { arguments: { text?: string } }) {
   const [taskText, setTaskText] = useState(props.arguments.text || "");
   const prefs = getPreferenceValues<Preferences>();
-  const filepath = resolvePath(expandHome(prefs.mitodosPath));
+  const mitodosDir = resolvePath(expandHome(prefs.mitodosDir));
+  const inboxPath = `${mitodosDir}/inbox.md`;
 
   async function handleSubmit() {
     const trimmed = taskText.trim();
@@ -27,7 +28,7 @@ export default function Command(props: { arguments: { text?: string } }) {
     }
 
     try {
-      appendToInbox(filepath, trimmed);
+      appendToInbox(mitodosDir, trimmed);
       await showHUD(`✓ Added: ${trimmed}`);
     } catch (error) {
       await showToast({
@@ -53,11 +54,10 @@ export default function Command(props: { arguments: { text?: string } }) {
         value={taskText}
         onChange={setTaskText}
         autoFocus
-        enableMarkdown={false}
       />
       <Form.Description
         title="File"
-        text={fileExists(prefs.mitodosPath) ? filepath : `${filepath} (will be created)`}
+        text={fileExists(inboxPath) ? inboxPath : `${inboxPath} (will be created)`}
       />
     </Form>
   );

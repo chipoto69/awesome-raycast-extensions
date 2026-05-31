@@ -63,11 +63,11 @@
   ],
   "preferences": [
     {
-      "name": "mitodosPath",
-      "title": "MiToDos File Path",
-      "description": "Full path to your primary mitodos.md file",
+      "name": "mitodosDir",
+      "title": "MiToDos Directory",
+      "description": "Directory for MiToDos markdown files",
       "type": "textfield",
-      "default": "~/wiki/_meta/mitodos.md",
+      "default": "~/wiki/mitodos",
       "required": true
     },
     {

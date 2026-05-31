@@ -64,7 +64,7 @@ function SearchResults({ query }: { query: string }) {
       <List.EmptyView
         icon={Icon.MagnifyingGlass}
         title="Search your tasks and knowledge base"
-        description="Type to search across mitodos files and wiki notes with QMD"
+        description="Type to search across mitodos files and wiki notes"
       />
     );
   }
@@ -89,7 +89,7 @@ function SearchResults({ query }: { query: string }) {
       {results.map((r, i) => {
         const fileName = r.path.split("/").pop()?.replace(/\.md$|\.txt$/, "") || r.path;
         const snippet = r.snippet.slice(0, 200);
-        const isTodo = fileName.startsWith("mitodos");
+        const isTodo = r.path.includes("/mitodos/");
 
         return (
           <List.Item
