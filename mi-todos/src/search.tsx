@@ -81,7 +81,12 @@ export default function Command(props: { arguments?: { query?: string } }) {
 
   if (isLoading) {
     return (
-      <List searchBarPlaceholder="Search your tasks..." searchText={searchText} onSearchTextChange={setSearchText} throttle>
+      <List
+        searchBarPlaceholder="Search your tasks..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+        throttle
+      >
         <List.EmptyView icon={Icon.CircleProgress} title="Searching..." />
       </List>
     );
@@ -92,14 +97,28 @@ export default function Command(props: { arguments?: { query?: string } }) {
 
   if (todos.length === 0 && wiki.length === 0) {
     return (
-      <List searchBarPlaceholder="Search your tasks..." searchText={searchText} onSearchTextChange={setSearchText} throttle>
-        <List.EmptyView icon={Icon.XMarkCircle} title="No results" description={`Nothing matched "${searchText}"`} />
+      <List
+        searchBarPlaceholder="Search your tasks..."
+        searchText={searchText}
+        onSearchTextChange={setSearchText}
+        throttle
+      >
+        <List.EmptyView
+          icon={Icon.XMarkCircle}
+          title="No results"
+          description={`Nothing matched "${searchText}"`}
+        />
       </List>
     );
   }
 
   return (
-    <List searchBarPlaceholder="Search your tasks..." searchText={searchText} onSearchTextChange={setSearchText} throttle>
+    <List
+      searchBarPlaceholder="Search your tasks..."
+      searchText={searchText}
+      onSearchTextChange={setSearchText}
+      throttle
+    >
       {todos.length > 0 && (
         <List.Section title="MiToDos">
           {todos.map((r, i) => {
