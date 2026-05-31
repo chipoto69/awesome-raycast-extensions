@@ -10,9 +10,10 @@ import {
 import { usePromise } from "@raycast/utils";
 import { useState } from "react";
 import { expandHome, resolvePath, readFile } from "./util/storage";
-import { search } from "./util/qmd";
+import { searchMitodos, searchWikiWithQmd } from "./util/qmd";
 
 interface Preferences {
+  mitodosDir: string;
   wikiPath: string;
 }
 
@@ -45,26 +46,28 @@ function ContentDetail({ filepath, fileName }: { filepath: string; fileName: str
 
 function SearchResults({ query }: { query: string }) {
   const prefs = getPreferenceValues<Preferences>();
+  const mitodosDir = resolvePath(expandHome(prefs.mitodosDir));
   const wikiPath = resolvePath(expandHome(prefs.wikiPath));
   const { push } = useNavigation();
 
   const { data, isLoading } = usePromise(
     async () => {
-      if (!query.trim()) return { results: [] as QmdResult[], method: "none" as const };
-      return search(query, wikiPath);
+      if (!query.trim()) return { todos: [] as QmdResult[], wiki: [] as QmdResult[] };
+
+      const todos = searchMitodos(mitodosDir, query);
+      const wiki = searchWikiWithQmd(wikiPath, query, 10);
+
+      return { todos, wiki };
     },
     [query],
   );
-
-  const results = data?.results ?? [];
-  const method = data?.method ?? "none";
 
   if (!query.trim()) {
     return (
       <List.EmptyView
         icon={Icon.MagnifyingGlass}
-        title="Search your tasks and knowledge base"
-        description="Type to search across mitodos files and wiki notes"
+        title="Search your MiToDos"
+        description="Type to search across your tasks and notes"
       />
     );
   }
@@ -73,49 +76,68 @@ function SearchResults({ query }: { query: string }) {
     return <List.EmptyView icon={Icon.CircleProgress} title="Searching..." />;
   }
 
-  if (results.length === 0) {
-    return <List.EmptyView icon={Icon.XMarkCircle} title="No results" description={`No matches for "${query}"`} />;
+  const todos = data?.todos ?? [];
+  const wiki = data?.wiki ?? [];
+  const total = todos.length + wiki.length;
+
+  if (total === 0) {
+    return <List.EmptyView icon={Icon.XMarkCircle} title="No results" description={`Nothing matched "${query}"`} />;
   }
 
-  const methodLabel =
-    method === "qmd"
-      ? "QMD semantic search"
-      : method === "grep"
-        ? "grep (QMD not available)"
-        : "";
-
   return (
-    <List.Section title={methodLabel}>
-      {results.map((r, i) => {
-        const fileName = r.path.split("/").pop()?.replace(/\.md$|\.txt$/, "") || r.path;
-        const snippet = r.snippet.slice(0, 200);
-        const isTodo = r.path.includes("/mitodos/");
-
-        return (
-          <List.Item
-            key={`${r.path}-${i}`}
-            icon={isTodo ? Icon.CheckCircle : Icon.Document}
-            title={fileName}
-            subtitle={snippet}
-            accessories={[
-              { text: isTodo ? "todo" : "wiki" },
-              { text: r.score > 0 ? `${(r.score * 100).toFixed(0)}%` : "" },
-            ]}
-            actions={
-              <ActionPanel>
-                <Action
-                  title="View Content"
-                  icon={Icon.Eye}
-                  onAction={() => push(<ContentDetail filepath={r.path} fileName={fileName} />)}
-                />
-                <Action.CopyToClipboard title="Copy Path" content={r.path} />
-                <Action.CopyToClipboard title="Copy Snippet" content={r.snippet} />
-              </ActionPanel>
-            }
-          />
-        );
-      })}
-    </List.Section>
+    <>
+      {todos.length > 0 && (
+        <List.Section title="MiToDos">
+          {todos.map((r, i) => {
+            const fileName = r.path.split("/").pop()?.replace(/\.md$/, "") || r.path;
+            return (
+              <List.Item
+                key={`todo-${i}`}
+                icon={Icon.CheckCircle}
+                title={fileName}
+                subtitle={r.snippet.slice(0, 120)}
+                actions={
+                  <ActionPanel>
+                    <Action
+                      title="View Content"
+                      icon={Icon.Eye}
+                      onAction={() => push(<ContentDetail filepath={r.path} fileName={fileName} />)}
+                    />
+                    <Action.CopyToClipboard title="Copy Path" content={r.path} />
+                  </ActionPanel>
+                }
+              />
+            );
+          })}
+        </List.Section>
+      )}
+      {wiki.length > 0 && (
+        <List.Section title="Wiki (QMD)">
+          {wiki.map((r, i) => {
+            const fileName = r.path.split("/").pop()?.replace(/\.md$/, "") || r.path;
+            return (
+              <List.Item
+                key={`wiki-${i}`}
+                icon={Icon.Document}
+                title={fileName}
+                subtitle={r.snippet.slice(0, 120)}
+                accessories={[{ text: r.score > 0 ? `${(r.score * 100).toFixed(0)}%` : "" }]}
+                actions={
+                  <ActionPanel>
+                    <Action
+                      title="View Content"
+                      icon={Icon.Eye}
+                      onAction={() => push(<ContentDetail filepath={r.path} fileName={fileName} />)}
+                    />
+                    <Action.CopyToClipboard title="Copy Path" content={r.path} />
+                  </ActionPanel>
+                }
+              />
+            );
+          })}
+        </List.Section>
+      )}
+    </>
   );
 }
 
@@ -124,7 +146,7 @@ export default function Command(props: { arguments: { query?: string } }) {
 
   return (
     <List
-      searchBarPlaceholder="Search tasks and wiki..."
+      searchBarPlaceholder="Search your tasks..."
       searchText={searchText}
       onSearchTextChange={setSearchText}
       isShowingDetail={false}
